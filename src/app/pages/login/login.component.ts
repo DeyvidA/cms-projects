@@ -25,7 +25,6 @@ export class LoginComponent {
   async login() {
     const { email, password } = this.loginForm.value;
 
-    // TypeScript ensures `email` and `password` are strings due to `nonNullable` above.
     if (!email || !password) {
       alert('Please fill out all required fields.');
       return;
@@ -40,6 +39,8 @@ export class LoginComponent {
       console.error('Error logging in:', error.message);
     } else {
       localStorage.setItem('supabase.auth.token', data?.session?.access_token);
+      // Redirect to the home page
+      window.location.href = '/dashboard';
     }
   }
 }
