@@ -1,0 +1,161 @@
+<header class="bg-gray-700 p-10 flex justify-between items-center">
+  <!-- Logo -->
+  <a href="/" class="text-white text-2xl font-semibold">Projects CSM</a>
+
+  <!-- Navigation -->
+  <nav>
+    <ul class="flex space-x-4">
+      <li>
+        <a href="/projects" class="text-white hover:text-gray-200">Projects</a>
+      </li>
+      <li>
+        <a href="/technologies" class="text-white hover:text-gray-200"
+          >Technologies</a
+        >
+      </li>
+      <li>
+        <a href="/logout" class="text-white hover:text-gray-200">Logout</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+<main class="container mx-auto py-10 max-w-lg">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+    Create Project
+  </h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!-- Title Field -->
+    <div class="mb-4">
+      <label for="title" class="block text-gray-700 font-medium mb-2"
+        >Title</label
+      >
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Enter project title"
+      />
+    </div>
+
+    <!-- Description Field -->
+    <div class="mb-4">
+      <label for="description" class="block text-gray-700 font-medium mb-2"
+        >Description</label
+      >
+      <textarea
+        id="description"
+        formControlName="description"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        rows="4"
+        placeholder="Enter project description"
+      ></textarea>
+    </div>
+
+    <!-- Repo URL Field -->
+    <div class="mb-4">
+      <label for="repo_link" class="block text-gray-700 font-medium mb-2"
+        >Repository URL</label
+      >
+      <input
+        id="repo_link"
+        type="url"
+        formControlName="repo_link"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Enter repository URL"
+      />
+    </div>
+
+    <!-- Demo URL Field -->
+    <div class="mb-4">
+      <label for="demo_link" class="block text-gray-700 font-medium mb-2"
+        >Demo URL</label
+      >
+      <input
+        id="demo_link"
+        type="url"
+        formControlName="demo_link"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Enter demo URL"
+      />
+    </div>
+
+    <div class="flex gap-5">
+      <!-- Starting At Field -->
+      <div class="mb-4 w-1/2">
+        <label for="starting_at" class="block text-gray-700 font-medium mb-2"
+          >Starting At</label
+        >
+        <input
+          id="starting_at"
+          type="date"
+          formControlName="starting_at"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <!-- Ending At Field -->
+      <div class="mb-4 w-1/2">
+        <label for="ending_at" class="block text-gray-700 font-medium mb-2"
+          >Ending At</label
+        >
+        <input
+          id="ending_at"
+          type="date"
+          formControlName="ending_at"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+    </div>
+    <!-- technologies -->
+    <div class="mb-4">
+      <label for="technologies" class="block text-gray-700 font-medium mb-2"
+        >Technologies</label
+      >
+      <!-- <ng-multiselect-dropdown
+        [placeholder]="'custom placeholder'"
+        [settings]="dropdownSettings"
+        [data]="dropdownList"
+        [(ngModel)]="selectedItems"
+        formControlName="technologies"
+        (onSelect)="onItemSelect($event)"
+        (onSelectAll)="onSelectAll($event)"
+      >
+      </ng-multiselect-dropdown> -->
+    </div>
+
+    <!-- Tag Field -->
+    <div class="mb-4">
+      <label for="tag" class="block text-gray-700 font-medium mb-2">Tag</label>
+      <input
+        id="tag"
+        type="text"
+        formControlName="tag"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Enter tag (comma-separated)"
+      />
+    </div>
+
+    <!-- Image Upload Field -->
+    <div class="mb-6">
+      <label for="image" class="block text-gray-700 font-medium mb-2"
+        >Project Logo</label
+      >
+      <input
+        id="image"
+        type="file"
+        (change)="onFileChange($event)"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+      [disabled]="form.invalid"
+    >
+      Create Project
+    </button>
+  </form>
+</main>

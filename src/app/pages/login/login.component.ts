@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { supabase } from '../../../utils/supabaseClient';
 import { FormControl, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Validators } from '@angular/forms';
+import { supabase } from '../../../utils/supabaseClient';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +39,6 @@ export class LoginComponent {
       console.error('Error logging in:', error.message);
     } else {
       localStorage.setItem('supabase.auth.token', data?.session?.access_token);
-      // Redirect to the home page
       window.location.href = '/dashboard';
     }
   }
