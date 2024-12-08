@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { supabase } from '../../../../utils/supabaseClient';
 
@@ -6,9 +7,10 @@ import { supabase } from '../../../../utils/supabaseClient';
   selector: 'app-create',
   imports: [ReactiveFormsModule],
   templateUrl: './create.component.html',
-  styleUrl: './create.component.css',
 })
 export class CreateComponent {
+  constructor(private router: Router) {}
+
   form = new FormGroup({
     name: new FormControl(''),
     description: new FormControl(''),
@@ -51,6 +53,7 @@ export class CreateComponent {
       },
     ]);
 
+    this.router.navigate(['/technologies']);
     alert('Technology created successfully!');
   }
 }

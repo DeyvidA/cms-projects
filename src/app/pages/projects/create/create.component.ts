@@ -1,15 +1,29 @@
-import { Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  FormControl,
+  ReactiveFormsModule,
+  FormGroup,
+  FormsModule,
+} from '@angular/forms';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { supabase } from '../../../../utils/supabaseClient';
-import { title } from 'process';
 
 @Component({
   selector: 'app-create',
-  imports: [ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgMultiSelectDropDownModule,
+    FormsModule,
+  ],
   templateUrl: './create.component.html',
-  styleUrl: './create.component.css',
 })
 export class CreateComponent {
+  dropdownList: any = [];
+  selectedItems: any = [];
+  dropdownSettings: any = {};
+
   form = new FormGroup({
     title: new FormControl(''),
     description: new FormControl(''),
@@ -18,9 +32,39 @@ export class CreateComponent {
     starting_at: new FormControl(''),
     ending_at: new FormControl(''),
     tag: new FormControl(''),
+    technologies: new FormControl([]),
   });
 
+  onInit() {
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'item_id',
+      textField: 'item_text',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: true,
+    };
+
+    this.fetchTechnologies();
+  }
+
   selectedFile: File | null = null;
+
+  async fetchTechnologies() {
+    const { data, error } = await supabase.from('technologies').select('*');
+
+    if (error) {
+      console.error('Error fetching technologies:', error);
+    } else {
+      this.dropdownList = data.map((technology) => ({
+        item_id: technology.id,
+        item_text: technology.name,
+      }));
+
+      console.log('dropdownList:', this.dropdownList);
+    }
+  }
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -28,6 +72,13 @@ export class CreateComponent {
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
     }
+  }
+
+  onItemSelect(item: any) {
+    console.log(item);
+  }
+  onSelectAll(items: any) {
+    console.log(items);
   }
 
   async onSubmit() {
