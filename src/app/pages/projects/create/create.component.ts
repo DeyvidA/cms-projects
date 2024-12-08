@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   FormControl,
   ReactiveFormsModule,
@@ -20,6 +21,7 @@ import { supabase } from '../../../../utils/supabaseClient';
   templateUrl: './create.component.html',
 })
 export class CreateComponent {
+  constructor(private router: Router) {}
   dropdownList: any = [];
   selectedItems: any = [];
   dropdownSettings: any = {};
@@ -131,5 +133,7 @@ export class CreateComponent {
     ]);
 
     alert('Project created successfully!');
+
+    this.router.navigate(['/projects']);
   }
 }
