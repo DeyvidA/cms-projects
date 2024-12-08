@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Validators } from '@angular/forms';
@@ -11,6 +12,7 @@ import { supabase } from '../../../utils/supabaseClient';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  constructor(private router: Router) {}
   loginForm = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
@@ -39,7 +41,7 @@ export class LoginComponent {
       console.error('Error logging in:', error.message);
     } else {
       localStorage.setItem('supabase.auth.token', data?.session?.access_token);
-      window.location.href = '/dashboard';
+      this.router.navigate(['/projects']);
     }
   }
 }
