@@ -1,19 +1,26 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common'; // ✅ Import CommonModule
 import { supabase } from '../../../../utils/supabaseClient';
 
 @Component({
   selector: 'app-create',
-  imports: [ReactiveFormsModule],
+  standalone: true, // ✅ Ensure standalone is true
+  imports: [ReactiveFormsModule, CommonModule], // ✅ Include CommonModule
   templateUrl: './create.component.html',
 })
 export class CreateComponent {
   constructor(private router: Router) {}
 
+  technologyTypes: any[] = []; // Ensure it's an array
+  technologyCategories: any[] = []; // Ensure it's an array
+
   form = new FormGroup({
     name: new FormControl(''),
     description: new FormControl(''),
+    type: new FormControl(''),
+    category: new FormControl(''),
   });
 
   selectedFile: File | null = null;
@@ -26,8 +33,35 @@ export class CreateComponent {
     }
   }
 
+  ngOnInit() { // ✅ Fix: Use ngOnInit instead of onInit
+    this.fetchTechnologyTypes();
+    this.fetchTechnologyCategories();
+  }
+
+  async fetchTechnologyTypes() {
+    const { data, error } = await supabase.from('technology_types').select('*');
+
+    if (error) {
+      console.error('Error fetching technology types:', error);
+    } else {
+      this.technologyTypes = data;
+      console.log('technologyTypes:', this.technologyTypes);
+    }
+  }
+
+  async fetchTechnologyCategories() {
+    const { data, error } = await supabase.from('technology_categories').select('*');
+
+    if (error) {
+      console.error('Error fetching technology categories:', error);
+    } else {
+      this.technologyCategories = data;
+      console.log('technologyCategories:', this.technologyCategories);
+    }
+  }
+
   async onSubmit() {
-    const { name, description } = this.form.value;
+    const { name, description, type, category } = this.form.value;
 
     if (!name || !description || !this.selectedFile) {
       alert('Please fill out all required fields.');
@@ -49,6 +83,8 @@ export class CreateComponent {
       {
         name,
         description,
+        type_id: type,
+        category_id: category,
         logo_url: data.fullPath,
       },
     ]);
