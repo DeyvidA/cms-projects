@@ -12,6 +12,7 @@ import { supabase } from '../../../../utils/supabaseClient';
 
 @Component({
   selector: 'app-create',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -20,11 +21,13 @@ import { supabase } from '../../../../utils/supabaseClient';
   ],
   templateUrl: './create.component.html',
 })
-export class CreateComponent {
+export class CreateComponent implements OnInit {
   constructor(private router: Router) {}
-  dropdownList: any = [];
-  selectedItems: any = [];
+
+  dropdownList: any[] = [];
+  selectedItems: any[] = [];
   dropdownSettings: any = {};
+  selectedFile: File | null = null;
 
   form = new FormGroup({
     title: new FormControl(''),
@@ -33,11 +36,10 @@ export class CreateComponent {
     demo_link: new FormControl(''),
     starting_at: new FormControl(''),
     ending_at: new FormControl(''),
-    tag: new FormControl(''),
     technologies: new FormControl([]),
   });
 
-  onInit() {
+  ngOnInit() {
     this.dropdownSettings = {
       singleSelection: false,
       idField: 'item_id',
@@ -45,16 +47,15 @@ export class CreateComponent {
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 3,
-      allowSearchFilter: true,
+      allowSelectAll: false,
+      allowSearchFilter: false,
     };
 
     this.fetchTechnologies();
   }
 
-  selectedFile: File | null = null;
-
   async fetchTechnologies() {
-    const { data, error } = await supabase.from('technologies').select('*');
+    const { data, error } = await supabase.from('technologies').select('id, name');
 
     if (error) {
       console.error('Error fetching technologies:', error);
@@ -63,9 +64,16 @@ export class CreateComponent {
         item_id: technology.id,
         item_text: technology.name,
       }));
-
-      console.log('dropdownList:', this.dropdownList);
+      console.log('Technologies Loaded:', this.dropdownList);
     }
+  }
+
+  onItemSelect(item: any) {
+    console.log('Selected Item:', item);
+  }
+
+  onSelectAll(items: any) {
+    console.log('All Selected Items:', items);
   }
 
   onFileChange(event: Event): void {
@@ -76,12 +84,6 @@ export class CreateComponent {
     }
   }
 
-  onItemSelect(item: any) {
-    console.log(item);
-  }
-  onSelectAll(items: any) {
-    console.log(items);
-  }
 
   async onSubmit() {
     const {
@@ -91,7 +93,7 @@ export class CreateComponent {
       demo_link,
       starting_at,
       ending_at,
-      tag,
+      technologies,
     } = this.form.value;
 
     if (
@@ -101,39 +103,66 @@ export class CreateComponent {
       !demo_link ||
       !starting_at ||
       !ending_at ||
-      !tag ||
       !this.selectedFile
     ) {
       alert('Please fill out all required fields.');
       return;
     }
 
+    // Upload project image
     const id = Math.random().toString(36).substring(7);
     const imageName = `${id}.png`;
-    const { data, error } = await supabase.storage
+    const { data: imageData, error: imageError } = await supabase.storage
       .from('projects')
       .upload(imageName, this.selectedFile);
 
-    if (error) {
-      console.error('Error uploading image:', error.message);
+    if (imageError) {
+      console.error('Error uploading image:', imageError.message);
       return;
     }
 
-    await supabase.from('projects').insert([
-      {
-        title,
-        description,
-        repo_link,
-        demo_link,
-        starting_at,
-        ending_at,
-        tag,
-        image_url: data.fullPath,
-      },
-    ]);
+    // Insert project into projects table
+    const { data: projectData, error: projectError } = await supabase
+      .from('projects')
+      .insert([
+        {
+          title,
+          description,
+          repo_link,
+          demo_link,
+          starting_at,
+          ending_at,
+          image_url: imageData.fullPath,
+        },
+      ])
+      .select('id')
+      .single();
+
+    if (projectError) {
+      console.error('Error inserting project:', projectError.message);
+      return;
+    }
+
+    // Insert selected technologies into project_technologies table
+    if (technologies && technologies.length > 0) {
+      const projectId = projectData.id;
+      const projectTechnologies = technologies.map((tech: any) => ({
+        project_id: projectId,
+        technology_id: tech.item_id,
+      }));
+
+      const { error: techError } = await supabase
+        .from('project_technologies')
+        .insert(projectTechnologies);
+
+      if (techError) {
+        console.error('Error inserting project technologies:', techError.message);
+        return;
+      }
+    }
 
     alert('Project created successfully!');
-
     this.router.navigate(['/projects']);
   }
+
 }

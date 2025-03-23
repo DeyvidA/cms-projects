@@ -54,6 +54,33 @@
       <div class="text-red-500 text-sm">Description is required.</div>
     </div>
 
+    <!-- Technology type select -->
+    <div class="mb-4">
+      <label for="type" class="block text-gray-700 font-medium mb-2"
+        >Type</label
+      >
+      <select formControlName="type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option *ngFor="let tech of technologyTypes" [value]="tech.id">
+          {{ tech.name }}
+        </option>
+      </select>
+
+      <div class="text-red-500 text-sm">Type is required.</div>
+    </div>
+
+    <!-- Technology category select -->
+    <div class="mb-4">
+      <label for="category" class="block text-gray-700 font-medium mb-2"
+        >Category</label
+      >
+      <select formControlName="category" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option *ngFor="let tech of technologyCategories" [value]="tech.id">
+          {{ tech.name }}
+        </option>
+      </select>
+
+    </div>
+
     <!-- Logo URL Field -->
     <div class="mb-6">
       <label for="imae" class="block text-gray-700 font-medium mb-2"
